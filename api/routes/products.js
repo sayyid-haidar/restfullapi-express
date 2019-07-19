@@ -1,19 +1,32 @@
+"use stric";
+const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 
-// Route::prefix('/product')->group(function () {
-//     Route::get('/all', 'User\StoreController@product');
-//     Route::get('/{id}', 'User\StoreController@detail');
-//     Route::get('/search', 'User\CartController@search');
-
-//     Route::post('/cart/add', 'User\CartController@addCart');
-// });
+const Product = require("../models/product");
 
 router.get("/", (req, res, next) => {
-    res.status(200).json({
-        msg: "Stauts OK!"
-    })
-})
+  res.status(200).json({
+    msg: "Stauts OK!"
+  });
+});
+
+router.post("/", (req, res, next) => {
+  const product = new Product({
+    _id: mongoose.Types.ObjectId(),
+    name: req.body.name,
+    price: req.body.price
+  });
+
+  product
+    .save()
+    .then(result => console.log(result))
+    .catch(err => console.log(err));
+
+  res.status(200).json({
+    msg: "/POST OK!",
+    createProduct: product
+  });
+});
 
 module.exports = router;
-
