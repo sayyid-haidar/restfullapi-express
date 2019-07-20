@@ -91,7 +91,14 @@ router.delete("/:orderId", (req, res, next) => {
   const id = req.params.orderId;
   Order.remove({ _id: id })
     .exec()
-    .then(result => res.status(200).json(result))
+    .then(result => res.status(200).json({
+        messege: "Order deleted",
+        request: {
+            type: "POST",
+            url: url,
+            body: {productID: "ID", qty: "Number"}
+        }
+    }))
     .catch(err => res.status(500).json({ error: err }));
 });
 
