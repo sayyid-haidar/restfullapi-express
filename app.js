@@ -11,13 +11,15 @@ const url =
   "@olshop-jyp3m.mongodb.net/test?retryWrites=true&w=majority";
 
 mongoose.connect(url, { useNewUrlParser: true });
+mongoose.Promise = global.Promise;
 
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use("/product", require("./api/routes/products"));
+app.use("/products", require("./api/routes/products"));
+app.use("/orders", require("./api/routes/orders"));
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
