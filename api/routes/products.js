@@ -3,12 +3,38 @@ const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + file.originalname);
+  }
+});
+const fileFilter = (req, file, cb) => {
+  // reject a file
+  if(file.mimetype === "image/jpg" || file.mimetype === "image/png") {
+    cd(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5
+  },
+  fileFilter: fileFilter,
+});
+
 const Product = require("../models/product");
 const url = process.env.URL + "products/";
 
 router.get("/", (req, res, next) => {
   Product.find()
-    .select("name price _id")
+    .select("name price _id image")
     .exec()
     .then(docs => {
       const response = {
@@ -17,6 +43,7 @@ router.get("/", (req, res, next) => {
           return {
             name: doc.name,
             price: doc.price,
+            image: doc.image,
             _id: doc._id,
             requset: {
               types: "GET",
@@ -33,7 +60,7 @@ router.get("/", (req, res, next) => {
 router.get("/:productId", (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
-    .select("name price _id")
+    .select("name price _id image")
     .exec()
     .then(doc => {
       console.log(doc);
@@ -55,11 +82,12 @@ router.get("/:productId", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("productImage"), (req, res, next) => {
   const product = new Product({
     _id: mongoose.Types.ObjectId(),
     name: req.body.name,
-    price: req.body.price
+    price: req.body.price,
+    image: req.file.path,
   });
 
   product
@@ -70,6 +98,7 @@ router.post("/", (req, res, next) => {
         createProduct: {
           name: result.name,
           price: result.price,
+          image: result.image,
           _id: result._id,
           request: {
             type: "GET",

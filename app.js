@@ -10,8 +10,11 @@ const url =
   process.env.MONGO_ATLAS_PW +
   "@olshop-jyp3m.mongodb.net/test?retryWrites=true&w=majority";
 
-mongoose.connect(url, { useNewUrlParser: true });
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
+mongoose
+  .connect(url, { useNewUrlParser: true })
+  .then(res => console.log({ messege: "DB Connect" }))
+  .catch(err => console.log({ messege: "Connect DB fail" }));
 
 app.use(helmet());
 app.use(morgan("dev"));

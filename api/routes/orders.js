@@ -10,6 +10,7 @@ const url = process.env.URL + "orders/";
 router.get("/", (req, res, next) => {
   Order.find()
     .select("_id productId qty")
+    .populate("productId", "name")
     .exec()
     .then(docs => {
       const response = {
@@ -35,6 +36,7 @@ router.get("/", (req, res, next) => {
 
 router.get("/:orderId", (req, res, next) => {
   Order.findById(req.params.orderId)
+    .populate("productId", "name")
     .exec()
     .then(order => {
       if (order === null) {
@@ -91,14 +93,16 @@ router.delete("/:orderId", (req, res, next) => {
   const id = req.params.orderId;
   Order.remove({ _id: id })
     .exec()
-    .then(result => res.status(200).json({
+    .then(result =>
+      res.status(200).json({
         messege: "Order deleted",
         request: {
-            type: "POST",
-            url: url,
-            body: {productID: "ID", qty: "Number"}
+          type: "POST",
+          url: url,
+          body: { productID: "ID", qty: "Number" }
         }
-    }))
+      })
+    )
     .catch(err => res.status(500).json({ error: err }));
 });
 
