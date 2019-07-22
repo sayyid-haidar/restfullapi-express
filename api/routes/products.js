@@ -1,9 +1,12 @@
 "use stric";
 const mongoose = require("mongoose");
 const express = require("express");
-const router = express.Router();
-
 const multer = require("multer");
+
+const router = express.Router();
+const Product = require("../models/product");
+const url = process.env.URL + "products/";
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./uploads/");
@@ -15,7 +18,7 @@ const storage = multer.diskStorage({
 const fileFilter = (req, file, cb) => {
   // reject a file
   if(file.mimetype === "image/jpg" || file.mimetype === "image/png") {
-    cd(null, true);
+    cb(null, true);
   } else {
     cb(null, false);
   }
@@ -29,8 +32,6 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-const Product = require("../models/product");
-const url = process.env.URL + "products/";
 
 router.get("/", (req, res, next) => {
   Product.find()
@@ -82,7 +83,7 @@ router.get("/:productId", (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("productImage"), (req, res, next) => {
+router.post("/", upload.single("image"), (req, res, next) => {
   const product = new Product({
     _id: mongoose.Types.ObjectId(),
     name: req.body.name,
