@@ -2,6 +2,7 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const User = require("../models/user");
@@ -15,7 +16,6 @@ router.post("/signup", (req, res, next) => {
       const user = new User({
         _id: mongoose.Types.ObjectId(),
         email: req.body.email,
-        username: req.body.username,
         password: hash
       });
       user
@@ -26,7 +26,6 @@ router.post("/signup", (req, res, next) => {
             signup: {
               _id: user._id,
               email: user.email,
-              username: user.username,
               request: {
                 type: "POST",
                 url: url + "login"
@@ -56,7 +55,20 @@ router.post("/login", (req, res, next) => {
           if (err) {
             return res.status(401).json({ messege: "Auth failed" });
           } else if (result) {
-            return res.status(200).json({ messege: "Auth successful" });
+            const token = jwt.sign(
+              {
+                email: user[0].email,
+                userId: user[0]._id
+              },
+              process.env.JWT_KEY,
+              {
+                expiresIn: "1h"
+              }
+            );
+            return res.status(200).json({
+              messege: "Auth successful",
+              token: token
+            });
           } else {
             return res.status(401).json({ messege: "Auth failed" });
           }
