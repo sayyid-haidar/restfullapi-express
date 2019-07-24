@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const router = express.Router();
 const User = require("../models/user");
-const url = process.env.URL + "users/";
+const url = process.env.URL + "user/";
 
 router.post("/signup", (req, res, next) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -38,11 +38,34 @@ router.post("/signup", (req, res, next) => {
           // console.log(err.errmsg);
           res.status(500).json({
             messege: "Signup error",
-            error: err,
+            error: err
           });
         });
     }
   });
+});
+
+router.post("/login", (req, res, next) => {
+  User.find({ email: req.body.email })
+    .exec()
+    .then(user => {
+      if (user.length < 1) {
+        return res.status(401).json({ messege: "Auth faild" });
+      } else {
+        bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+          if (err) {
+            return res.status(401).json({ messege: "Auth failed" });
+          } else if (result) {
+            return res.status(200).json({ messege: "Auth successful" });
+          } else {
+            return res.status(401).json({ messege: "Auth failed" });
+          }
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: err });
+    });
 });
 
 router.delete("/:userId", (req, res, next) => {

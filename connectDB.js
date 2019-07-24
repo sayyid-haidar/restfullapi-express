@@ -10,7 +10,7 @@ const local = "mongodb://localhost:27017/storeDB";
 // mongoose.Promise = global.Promise;
 mongoose
   .connect(url, { useNewUrlParser: true })
-  .then(() => console.log({ mongodb: "DB Connect" }))
+  .then(() => console.log({ mongodb: "DB Atlas Connect" }))
   .catch(() => {
     mongoose
       .connect(local, { useNewUrlParser: true })

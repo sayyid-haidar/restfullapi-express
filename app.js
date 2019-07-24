@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use("/products", require("./api/routes/products"));
 app.use("/orders", require("./api/routes/orders"));
-app.use("/users", require("./api/routes/users"));
+app.use("/user", require("./api/routes/users"));
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
