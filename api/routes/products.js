@@ -2,8 +2,9 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const multer = require("multer");
-
 const router = express.Router();
+
+const chackAuth = require("../middleware/chackAuth")
 const Product = require("../models/product");
 const url = process.env.URL + "products/";
 
@@ -83,7 +84,8 @@ router.get("/:productId", (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("image"), (req, res, next) => {
+router.post("/", chackAuth, upload.single("image"), (req, res, next) => {
+  console.log(req)
   const product = new Product({
     _id: mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -116,7 +118,7 @@ router.post("/", upload.single("image"), (req, res, next) => {
     });
 });
 
-router.patch("/:productId", (req, res, next) => {
+router.patch("/:productId", chackAuth, (req, res, next) => {
   const id = req.params.productId;
   const updateOps = {};
   for (const ops of req.body) {
@@ -136,7 +138,7 @@ router.patch("/:productId", (req, res, next) => {
     .catch(err => res.status(500).json({ error: err }));
 });
 
-router.delete("/:productId", (req, res, next) => {
+router.delete("/:productId", chackAuth, (req, res, next) => {
   const id = req.params.productId;
   Product.remove({ _id: id })
     .exec()

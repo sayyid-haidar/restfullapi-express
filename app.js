@@ -6,11 +6,11 @@ const morgan = require("morgan");
 
 const app = express();
 
-app.use(helmet());
-app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(morgan("dev"));
+app.use(helmet());
 
 app.use("/products", require("./api/routes/products"));
 app.use("/orders", require("./api/routes/orders"));

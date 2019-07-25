@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 
-const Order = require("../models/order");
+const chackAuth = require("../middleware/chackAuth")
 const Product = require("../models/product");
+const Order = require("../models/order");
 const url = process.env.URL + "orders/";
 
 router.get("/", (req, res, next) => {
@@ -54,7 +55,7 @@ router.get("/:orderId", (req, res, next) => {
     .catch(err => res.status(500).json({ error: err }));
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", chackAuth, (req, res, next) => {
   Order.findById(req.body.productId)
     .then(product => {
       const order = new Order({
@@ -83,13 +84,13 @@ router.post("/", (req, res, next) => {
       });
     });
 });
-router.patch("/:orderId", (req, res, next) => {
+router.patch("/:orderId", chackAuth, (req, res, next) => {
   Order.findById(req.params.orderId)
     .exce()
     .then()
     .catch();
 });
-router.delete("/:orderId", (req, res, next) => {
+router.delete("/:orderId", chackAuth, (req, res, next) => {
   const id = req.params.orderId;
   Order.remove({ _id: id })
     .exec()

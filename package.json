@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "database": "sudo apachectl stop && sudo /opt/lampp/lampp start && sudo service mongod start"
+    "db": "sudo apachectl stop && sudo /opt/lampp/lampp start && sudo service mongod start"
   },
   "license": "MIT",
   "dependencies": {
